@@ -3,3 +3,13 @@ __pycache__/
 
 # Dataset 
 Dataset/
+
+# Ignore files like checkpoints, caches, and virtual environments to keep the repository clean
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.venv
+env/
+venv/
+.env.bak/
+venv.bak/
