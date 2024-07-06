@@ -16,7 +16,7 @@ from torch.utils.data import Dataset
 import nibabel as nib
 from scipy.ndimage.interpolation import zoom
 
-from config.serde import read_config
+from config.reader import read_config
 
 
 

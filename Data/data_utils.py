@@ -45,7 +45,7 @@ def weight_creator(file_base_dir="/datasets/BraTS20/", label_num=2, modality=2):
     weight: list
         a list including the inverted class frequencies based on the training data
     """
-    chosen_df = pd.read_csv(os.path.join(file_base_dir, "brats20_master_list.csv"), sep=',')
+    chosen_df = pd.read_csv(os.path.join(file_base_dir, "train.csv"), sep=',')
     chosen_df = chosen_df[chosen_df['soroosh_split'] == 'train']
 
     if int(modality) == 1:
