@@ -28,8 +28,12 @@ trained_model_name: trained_model.pth
 class_weights: [0.00312639, 0.60484207, 0.05533713, 0.3366944] # for BraTS20
 
 # changeable items:
-file_path: C:\Users\fahim\Documents\Research_project\F2NetViT
+T_DATASET_PATH: C:\Users\fahim\Documents\Research_project\F2NetViT\Data\train_list.txt
+V_DATASET_PATH: C:\Users\fahim\Documents\Research_project\F2NetViT\Data\valid_list.txt
 target_dir: C:\Users\fahim\Documents\Research_project\F2NetViT\Targets
 network_save_freq: 200 # based on the batch size, shows the number of epochs done; every half an hour is good
 display_stats_freq: 1 # valid freq is equal to this
-num_epochs: 150
+num_epochs: 50
+TRAIN_SPLIT: 0.7
+VALID_SPLIT: 0.1
+TEST_SPLIT: 0.1
