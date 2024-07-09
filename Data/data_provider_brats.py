@@ -1,10 +1,4 @@
-"""
-Created on March 4, 2022.
-data_provider_brats.py
 
-@author: Soroosh Tayebi Arasteh <soroosh.arasteh@rwth-aachen.de>
-https://github.com/tayebiarasteh/
-"""
 
 import os
 import torch
@@ -33,7 +27,6 @@ class data_loader_3D(Dataset):
         mode: str
             Nature of operation to be done with the data.
                 Possible inputs are train, valid, test
-                Default value: train
 
         modality: int
             Modality of the MR sequence
@@ -49,11 +42,23 @@ class data_loader_3D(Dataset):
             If we want to have image down sampling
         """
 
+        # Read configuration file
         self.cfg_path = cfg_path
         self.params = read_config(cfg_path)
         self.mode = mode
-        self.file_base_dir = self.params['T_DATASET_PATH'] if mode == 'train' else self.params['V_DATASET_PATH']
+
+        # Determine the base directory based on the mode (train/valid)
+        if mode == 'train':
+            self.file_base_dir = self.params['T_DATASET_PATH']
+            self.dataset_base_path = self.params['TRAIN_BASE_PATH']
+        else:
+            self.file_base_dir = self.params['V_DATASET_PATH']
+            self.dataset_base_path = self.params['VALID_BASE_PATH']
+
+        # Read the file paths from the file list
         self.file_path_list = self._get_file_paths(self.file_base_dir)
+        
+        # Store other parameters
         self.modality = int(modality)
         self.multimodal = multimodal
         self.image_downsample = image_downsample
@@ -73,11 +78,19 @@ class data_loader_3D(Dataset):
         img: torch tensor
         label: torch tensor
         """
-        path_pat = os.path.join(self.file_base_dir, str(self.file_path_list[idx]))
-        label_path = os.path.join(path_pat, str(self.file_path_list[idx]) + '_seg.nii.gz')
+        # Construct the full paths for patient directory and label file
+        sub_dir = self.file_path_list[idx]
+        path_pat = os.path.join(self.dataset_base_path, sub_dir)
+        label_path = os.path.join(path_pat, sub_dir + '-seg.nii.gz')
+
+        # Debugging print statements
+        print(f"Path to patient directory: {path_pat}")
+        print(f"Path to label: {label_path}")
+
+        # Load and preprocess the label
         label = nib.load(label_path).get_fdata()  # (h, w, d)
         label = label.transpose(2, 0, 1)  # (d, h, w)
-        label = label.astype(np.int)  # (d, h, w)
+        label = label.astype(np.int32)  # (d, h, w)
 
         label1 = label.copy()  # (d, h, w)
         label2 = label.copy()  # (d, h, w)
@@ -86,23 +99,24 @@ class data_loader_3D(Dataset):
         label2 = np.where(label2 == 2, 1, 0)  # (d, h, w)
         label4 = np.where(label4 == 4, 1, 0)  # (d, h, w)
 
+        # Process multimodal images if required
         if self.multimodal:
-            path_file1 = os.path.join(path_pat, str(self.file_path_list[idx]) + '_t1.nii.gz')
+            path_file1 = os.path.join(path_pat, sub_dir + '-t1n.nii.gz')
             img1 = nib.load(path_file1).get_fdata()  # (h, w, d)
             normalized_img1 = self.irm_min_max_preprocess(img1)  # (h, w, d)
             normalized_img1 = normalized_img1.transpose(2, 0, 1)  # (d, h, w)
 
-            path_file2 = os.path.join(path_pat, str(self.file_path_list[idx]) + '_t1ce.nii.gz')
+            path_file2 = os.path.join(path_pat, sub_dir + '-t1c.nii.gz')
             img2 = nib.load(path_file2).get_fdata()  # (h, w, d)
             normalized_img2 = self.irm_min_max_preprocess(img2)  # (h, w, d)
             normalized_img2 = normalized_img2.transpose(2, 0, 1)  # (d, h, w)
 
-            path_file3 = os.path.join(path_pat, str(self.file_path_list[idx]) + '_t2.nii.gz')
+            path_file3 = os.path.join(path_pat, sub_dir + '-t2w.nii.gz')
             img3 = nib.load(path_file3).get_fdata()  # (h, w, d)
             normalized_img3 = self.irm_min_max_preprocess(img3)  # (h, w, d)
             normalized_img3 = normalized_img3.transpose(2, 0, 1)  # (d, h, w)
 
-            path_file4 = os.path.join(path_pat, str(self.file_path_list[idx]) + '_flair.nii.gz')
+            path_file4 = os.path.join(path_pat, sub_dir + '-t2f.nii.gz')
             img4 = nib.load(path_file4).get_fdata()  # (h, w, d)
             normalized_img4 = self.irm_min_max_preprocess(img4)  # (h, w, d)
             normalized_img4 = normalized_img4.transpose(2, 0, 1)  # (d, h, w)
@@ -122,13 +136,13 @@ class data_loader_3D(Dataset):
 
         else:
             if self.modality == 1:
-                path_file = os.path.join(path_pat, str(self.file_path_list[0]) + '_t1.nii.gz')
+                path_file = os.path.join(path_pat, sub_dir + '-t1n.nii.gz')
             elif self.modality == 2:
-                path_file = os.path.join(path_pat, str(self.file_path_list[0]) + '_t1ce.nii.gz')
+                path_file = os.path.join(path_pat, sub_dir + '-t1c.nii.gz')
             elif self.modality == 3:
-                path_file = os.path.join(path_pat, str(self.file_path_list[0]) + '_t2.nii.gz')
+                path_file = os.path.join(path_pat, sub_dir + '-t2w.nii.gz')
             elif self.modality == 4:
-                path_file = os.path.join(path_pat, str(self.file_path_list[0]) + '_flair.nii.gz')
+                path_file = os.path.join(path_pat, sub_dir + '-t2f.nii.gz')
             img = nib.load(path_file).get_fdata()
             img = img.astype(np.float32)  # (h, w, d)
             normalized_img = self.irm_min_max_preprocess(img)  # (h, w, d)
