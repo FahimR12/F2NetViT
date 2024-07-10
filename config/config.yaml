@@ -25,7 +25,9 @@ tb_logs_path: tensor_board_logs/
 stat_log_path: stat_logs
 checkpoint_name: checkpoint.tar
 trained_model_name: trained_model.pth
-class_weights: [0.00312639, 0.60484207, 0.05533713, 0.3366944]  # for BraTS20
+class_weights: [0.60484207, 0.05533713, 0.3366944]  # for 3 classes
+class_weights_4: [0.00312639, 0.60484207, 0.05533713, 0.3366944]
+  # for BraTS20
 
 # Paths to the dataset
 T_DATASET_PATH: 'C:/Users/fahim/Documents/Research_project/F2NetViT/Data/train_list.txt'
@@ -40,3 +42,4 @@ num_epochs: 50
 TRAIN_SPLIT: 0.7
 VALID_SPLIT: 0.1
 TEST_SPLIT: 0.1
+TRAIN_CUDA: True
