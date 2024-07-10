@@ -70,7 +70,7 @@ class data_loader_3D(Dataset):
         Returns
         -------
         img: torch tensor
-        label: torch tensor
+        label: torch tensor (if mode is 'train')
         """
         # Construct the full paths for patient directory and label file
         sub_dir = self.file_path_list[idx]
@@ -79,19 +79,21 @@ class data_loader_3D(Dataset):
 
         # Debugging print statements
         print(f"Path to patient directory: {path_pat}")
-        print(f"Path to label: {label_path}")
+        if self.mode == 'train':
+            print(f"Path to label: {label_path}")
 
-        # Load and preprocess the label
-        label = nib.load(label_path).get_fdata()  # (h, w, d)
-        label = label.transpose(2, 0, 1)  # (d, h, w)
-        label = label.astype(np.int32)  # (d, h, w)
+        # Load and preprocess the label if in training mode
+        if self.mode == 'train':
+            label = nib.load(label_path).get_fdata()  # (h, w, d)
+            label = label.transpose(2, 0, 1)  # (d, h, w)
+            label = label.astype(np.int32)  # (d, h, w)
 
-        label1 = label.copy()  # (d, h, w)
-        label2 = label.copy()  # (d, h, w)
-        label4 = label.copy()  # (d, h, w)
-        label1 = np.where(label1 == 1, 1, 0)  # (d, h, w)
-        label2 = np.where(label2 == 2, 1, 0)  # (d, h, w)
-        label4 = np.where(label4 == 4, 1, 0)  # (d, h, w)
+            label1 = label.copy()  # (d, h, w)
+            label2 = label.copy()  # (d, h, w)
+            label4 = label.copy()  # (d, h, w)
+            label1 = np.where(label1 == 1, 1, 0)  # (d, h, w)
+            label2 = np.where(label2 == 2, 1, 0)  # (d, h, w)
+            label4 = np.where(label4 == 4, 1, 0)  # (d, h, w)
 
         # Process multimodal images if required
         if self.multimodal:
@@ -117,10 +119,16 @@ class data_loader_3D(Dataset):
 
             # Image resizing for memory issues
             if self.image_downsample:
-                normalized_img_resized1, label1 = self.resize_manual(normalized_img1, label1)
-                normalized_img_resized2, label2 = self.resize_manual(normalized_img2, label2)
-                normalized_img_resized3, label4 = self.resize_manual(normalized_img3, label4)
-                normalized_img_resized4, _ = self.resize_manual(normalized_img4, label4)
+                if self.mode == 'train':
+                    normalized_img_resized1, label1 = self.resize_manual(normalized_img1, label1)
+                    normalized_img_resized2, label2 = self.resize_manual(normalized_img2, label2)
+                    normalized_img_resized3, label4 = self.resize_manual(normalized_img3, label4)
+                    normalized_img_resized4, _ = self.resize_manual(normalized_img4, label4)
+                else:
+                    normalized_img_resized1 = self.resize_manual(normalized_img1, None)
+                    normalized_img_resized2 = self.resize_manual(normalized_img2, None)
+                    normalized_img_resized3 = self.resize_manual(normalized_img3, None)
+                    normalized_img_resized4 = self.resize_manual(normalized_img4, None)
                 normalized_img_resized = np.stack((normalized_img_resized1, normalized_img_resized2,
                                                    normalized_img_resized3, normalized_img_resized4))  # (c=4, d, h, w)
             else:
@@ -144,27 +152,30 @@ class data_loader_3D(Dataset):
 
             # Image resizing for memory issues
             if self.image_downsample:
-                normalized_img_resized, label1 = self.resize_manual(normalized_img, label1)
-                _, label2 = self.resize_manual(normalized_img, label2)
-                _, label4 = self.resize_manual(normalized_img, label4)
+                normalized_img_resized = self.resize_manual(normalized_img, None)
             else:
                 normalized_img_resized = normalized_img
             normalized_img_resized = torch.from_numpy(normalized_img_resized)  # (d, h, w)
             normalized_img_resized = torch.unsqueeze(normalized_img_resized, 0)  # (c=1, d, h, w)
 
-        label1 = torch.from_numpy(label1)  # (d, h, w)
-        label2 = torch.from_numpy(label2)  # (d, h, w)
-        label4 = torch.from_numpy(label4)  # (d, h, w)
-        label = torch.stack((label1, label2, label4))  # (c=3, d, h, w)
+        if self.mode == 'train':
+            label1 = torch.from_numpy(label1)  # (d, h, w)
+            label2 = torch.from_numpy(label2)  # (d, h, w)
+            label4 = torch.from_numpy(label4)  # (d, h, w)
+            label = torch.stack((label1, label2, label4))  # (c=3, d, h, w)
 
-        normalized_img_resized = normalized_img_resized.float()  # float32
-        label = label.long()  # int64 (long)
+            normalized_img_resized = normalized_img_resized.float()  # float32
+            label = label.long()  # int64 (long)
 
-        # Ensuring the output sizes match
-        target_size = tuple(self.params['Network']['resize_shape'])
-        normalized_img_resized, label = self.resize_manual(normalized_img_resized, label)
-        
-        return normalized_img_resized, label
+            # Ensuring the output sizes match
+            target_size = tuple(self.params['Network']['resize_shape'])
+            normalized_img_resized, label = self.resize_manual(normalized_img_resized, label)
+            
+            return normalized_img_resized, label
+
+        else:
+            normalized_img_resized = normalized_img_resized.float()  # float32
+            return normalized_img_resized
 
     def data_normalization_mean_std(self, image):
         """Subtracting mean and std for each individual patient and modality
@@ -227,7 +238,8 @@ class data_loader_3D(Dataset):
         """
         resize_ratio = np.divide(tuple(self.params['Network']['resize_shape']), img.shape[1:])
         img = zoom(img, (1, *resize_ratio), order=2)
-        gt = zoom(gt, (1, *resize_ratio), order=0)
+        if gt is not None:
+            gt = zoom(gt, (1, *resize_ratio), order=0)
         return img, gt
 
     def _get_file_paths(self, file_base_dir):
