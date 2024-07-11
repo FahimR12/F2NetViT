@@ -1,12 +1,3 @@
-"""
-Created on March 4, 2022.
-csv_data_preprocess_brats.py
-
-creating a master list for Brats dataset.
-
-@author: Soroosh Tayebi Arasteh <soroosh.arasteh@rwth-aachen.de>
-https://github.com/tayebiarasteh/
-"""
 
 import os
 import pdb
@@ -43,33 +34,25 @@ class csv_preprocess_brats():
             number of federated clients for training
         """
 
-        path = '/PATH/train.csv'
+        path = '/PATH/Data/train_list.txt'
         output_df_path = '/PATH/' + str(
             num_clients) + '_clients/train.csv'
         os.makedirs(os.path.dirname(output_df_path), exist_ok=True)
 
         # initiating valid and train dfs
         final_train_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
         final_valid_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
         final_test_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
 
         final_all_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
 
         df = pd.read_csv(path, sep=',')
 
-        subject_list = df['BraTS_2020_subject_ID'].unique().tolist()
+        subject_list = df['BraTS_2024_subject_ID'].unique().tolist()
         random.shuffle(subject_list)
         # val_num = ceil(len(subject_list) / (1 / ratio))
 
@@ -79,52 +62,31 @@ class csv_preprocess_brats():
 
         # adding files to train
         for subject in train_subjects:
-            selected_df = df[df['BraTS_2020_subject_ID'] == subject]
+            selected_df = df[df['BraTS_2024_subject_ID'] == subject]
             tempp = pd.DataFrame([[selected_df['pat_num'].values[0], 'train', selected_df['site'].values[0],
-                                   selected_df['BraTS_2020_subject_ID'].values[0],
-                                   selected_df['BraTS_2017_subject_ID'].values[0],
-                                   selected_df['BraTS_2018_subject_ID'].values[0],
-                                   selected_df['TCGA_TCIA_subject_ID'].values[0],
-                                   selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
-                                   selected_df['Survival_days'].values[0], selected_df['Extent_of_Resection'].values[0],
+                                   selected_df['BraTS_2024_subject_ID'].values[0],
                                    selected_df['Grade'].values[0]]],
-                                 columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
-                                          'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
-                                          'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
+                                 columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID',
                                           'Grade'])
             final_train_data = final_train_data.append(tempp)
 
         # adding files to valid
         for subject in valid_subjects:
-            selected_df = df[df['BraTS_2020_subject_ID'] == subject]
-            tempp = pd.DataFrame([[selected_df['pat_num'].values[0], 'valid', 'site-valid',
-                                   selected_df['BraTS_2020_subject_ID'].values[0],
-                                   selected_df['BraTS_2017_subject_ID'].values[0],
-                                   selected_df['BraTS_2018_subject_ID'].values[0],
-                                   selected_df['TCGA_TCIA_subject_ID'].values[0],
-                                   selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
-                                   selected_df['Survival_days'].values[0], selected_df['Extent_of_Resection'].values[0],
+            selected_df = df[df['BraTS_2024_subject_ID'] == subject]
+            tempp = pd.DataFrame([[selected_df['pat_num'].values[0], 'train', selected_df['site'].values[0],
+                                   selected_df['BraTS_2024_subject_ID'].values[0],
                                    selected_df['Grade'].values[0]]],
-                                 columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
-                                          'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
-                                          'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
+                                 columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID',
                                           'Grade'])
             final_valid_data = final_valid_data.append(tempp)
 
         # adding files to test
         for subject in test_subjects:
-            selected_df = df[df['BraTS_2020_subject_ID'] == subject]
-            tempp = pd.DataFrame([[selected_df['pat_num'].values[0], 'test', 'site-test',
-                                   selected_df['BraTS_2020_subject_ID'].values[0],
-                                   selected_df['BraTS_2017_subject_ID'].values[0],
-                                   selected_df['BraTS_2018_subject_ID'].values[0],
-                                   selected_df['TCGA_TCIA_subject_ID'].values[0],
-                                   selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
-                                   selected_df['Survival_days'].values[0], selected_df['Extent_of_Resection'].values[0],
+            selected_df = df[df['BraTS_2024_subject_ID'] == subject]
+            tempp = pd.DataFrame([[selected_df['pat_num'].values[0], 'train', selected_df['site'].values[0],
+                                   selected_df['BraTS_2024_subject_ID'].values[0],
                                    selected_df['Grade'].values[0]]],
-                                 columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
-                                          'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
-                                          'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
+                                 columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID',
                                           'Grade'])
             final_test_data = final_test_data.append(tempp)
 
@@ -141,7 +103,7 @@ class csv_preprocess_brats():
         final_client_train_data_list = []
         for idx in range(num_clients):
             final_client_train_data_list.append(pd.DataFrame(
-                columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
+                columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
                          'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age',
                          'Survival_days',
                          'Extent_of_Resection', 'Grade']))
@@ -158,7 +120,7 @@ class csv_preprocess_brats():
                                        selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
                                        selected_df['Survival_days'].values[0],
                                        selected_df['Extent_of_Resection'].values[0], selected_df['Grade'].values[0]]],
-                                     columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
+                                     columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID',
                                               'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
                                               'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
                                               'Grade'])
@@ -198,17 +160,11 @@ class csv_preprocess_brats():
 
         # initiating valid and train dfs
         final_train_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
         final_valid_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
         final_all_data = pd.DataFrame(
-            columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
-                     'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age', 'Survival_days',
-                     'Extent_of_Resection', 'Grade'])
+            columns=['pat_num', 'training_splt', 'site', 'BraTS_2024_subject_ID', 'Grade'])
 
         df = pd.read_csv(path, sep=',')
 
@@ -230,7 +186,7 @@ class csv_preprocess_brats():
                                    selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
                                    selected_df['Survival_days'].values[0], selected_df['Extent_of_Resection'].values[0],
                                    selected_df['Grade'].values[0]]],
-                                 columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
+                                 columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID',
                                           'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
                                           'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
                                           'Grade'])
@@ -247,7 +203,7 @@ class csv_preprocess_brats():
                                    selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
                                    selected_df['Survival_days'].values[0], selected_df['Extent_of_Resection'].values[0],
                                    selected_df['Grade'].values[0]]],
-                                 columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
+                                 columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID',
                                           'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
                                           'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
                                           'Grade'])
@@ -266,7 +222,7 @@ class csv_preprocess_brats():
         final_client_train_data_list = []
         for idx in range(num_clients):
             final_client_train_data_list.append(pd.DataFrame(
-                columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
+                columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID', 'BraTS_2017_subject_ID',
                          'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID', 'BraTS_2019_subject_ID', 'Age',
                          'Survival_days',
                          'Extent_of_Resection', 'Grade']))
@@ -283,7 +239,7 @@ class csv_preprocess_brats():
                                        selected_df['BraTS_2019_subject_ID'].values[0], selected_df['Age'].values[0],
                                        selected_df['Survival_days'].values[0],
                                        selected_df['Extent_of_Resection'].values[0], selected_df['Grade'].values[0]]],
-                                     columns=['pat_num', 'soroosh_split', 'site', 'BraTS_2020_subject_ID',
+                                     columns=['pat_num', 'training_splt', 'site', 'BraTS_2020_subject_ID',
                                               'BraTS_2017_subject_ID', 'BraTS_2018_subject_ID', 'TCGA_TCIA_subject_ID',
                                               'BraTS_2019_subject_ID', 'Age', 'Survival_days', 'Extent_of_Resection',
                                               'Grade'])
@@ -313,8 +269,8 @@ class cropper():
         self.file_base_dir = self.params['file_path']
         org_df = pd.read_csv(os.path.join(self.file_base_dir, "brats20_master_list.csv"), sep=',')
         # self.df = org_df[org_df['pat_num'] > 72]
-        self.df = org_df[org_df['soroosh_split'] == 'test']
-        # valid_df = org_df[org_df['soroosh_split'] == 'valid']
+        self.df = org_df[org_df['training_splt'] == 'test']
+        # valid_df = org_df[org_df['training_splt'] == 'valid']
         # self.df = self.df.append(valid_df)
         # self.df = self.df.sort_values(['BraTS_2020_subject_ID'])
 
