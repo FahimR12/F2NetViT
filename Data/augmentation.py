@@ -1,10 +1,4 @@
-"""
-Created on March 7, 2022.
-augmentation_brats.py
 
-@author: Soroosh Tayebi Arasteh <soroosh.arasteh@rwth-aachen.de>
-https://github.com/tayebiarasteh/
-"""
 
 
 import pdb

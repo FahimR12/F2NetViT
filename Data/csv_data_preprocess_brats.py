@@ -1,12 +1,3 @@
-"""
-Created on March 4, 2022.
-csv_data_preprocess_brats.py
-
-creating a master list for Brats dataset.
-
-@author: Soroosh Tayebi Arasteh <soroosh.arasteh@rwth-aachen.de>
-https://github.com/tayebiarasteh/
-"""
 
 import os
 import pdb

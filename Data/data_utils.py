@@ -1,10 +1,3 @@
-"""
-Created on March 7, 2022.
-data_utils.py
-
-@author: Soroosh Tayebi Arasteh <soroosh.arasteh@rwth-aachen.de>
-https://github.com/tayebiarasteh/
-"""
 
 
 import numpy as np
