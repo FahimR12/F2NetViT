@@ -46,6 +46,9 @@ class Conv3DBlock(nn.Module):
 
     
     def forward(self, input):
+
+        print(f"Input shape in forward in Conv3DBlock (unet3d.py): {input.shape}")
+    # Rest of your forward method...
         res = self.relu(self.bn1(self.conv1(input)))
         res = self.relu(self.bn2(self.conv2(res)))
         out = None
@@ -123,6 +126,7 @@ class UNet3D(nn.Module):
         self.s_block1 = UpConv3DBlock(in_channels=level_2_chnls, res_channels=level_1_chnls, num_classes=num_classes, last_layer=True)
 
     def forward(self, input):
+        print(f"Input shape in forward UNet3D(unet3d.py): {input.shape}")
         # Analysis path forward feed
         out, residual_level1 = self.a_block1(input)
         out, residual_level2 = self.a_block2(out)

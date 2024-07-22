@@ -25,8 +25,8 @@ tb_logs_path: tensor_board_logs/
 stat_log_path: stat_logs
 checkpoint_name: checkpoint.tar
 trained_model_name: trained_model.pth
-class_weights: [0.60484207, 0.05533713, 0.3366944]  # for 3 classes
-class_weights_4: [0.00312639, 0.60484207, 0.05533713, 0.3366944]
+class_weights_3: [0.60484207, 0.05533713, 0.3366944]  # for 3 classes
+class_weights: [0.00312639, 0.60484207, 0.05533713, 0.3366944]
   # for BraTS20
 
 # Paths to the dataset
