@@ -4,7 +4,7 @@ __pycache__/
 # Dataset 
 Dataset/
 runs/
-
+Dataset.zip
 # Ignore files like checkpoints, caches, and virtual environments to keep the repository clean
 *.py[cod]
 .ipynb_checkpoints/
