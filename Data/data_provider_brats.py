@@ -105,6 +105,7 @@ class data_loader_3D(Dataset):
             #                                     Surrounding non-enhancing FLAIR hyperintensity (SNFH) — label 2),
             #                                     Enhancing tissue (ET — label 3) and,
             #                                     Resection cavity (RC - label 4)
+            
             label1 = label.copy()  # (d, h, w)
             label2 = label.copy()  # (d, h, w)
             label3 = label.copy()  # (d, h, w)
