@@ -6,6 +6,11 @@ from pathlib import Path
 import random
 import logging
 
+# Add the parent directory of 'configures' to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+
+from configures.my_config import MyConfig
 #setting up logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -19,16 +24,12 @@ stream_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 # add to path
-try:
-    from config import configs
-except ModuleNotFoundError:
-    ROOT = Path(__file__).resolve().parents[1] #project root directory
-    if ROOT not in sys.path:
-        sys.path.append(str(ROOT))
-    ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative path
-    from config import configs
+# Load configurations
+# Initialize configurations locally
+conf_base_path = '/home/fahim/F2NetViT/conf'
+configs = MyConfig(conf_base_path)
 
-# store the ttraining dataset into json file
+
 def generate_json_file(path, name):
     """
     Generate a json file to hold the dataset records
@@ -42,7 +43,7 @@ def generate_json_file(path, name):
     json_file_path = os.path.join(path, name)
     is_file = os.path.isfile(json_file_path)
     random.seed(50) # to generate consistent random results
-    train_root_dir = configs.Config.newGlobalConfigs.train_root_dir
+    train_root_dir = configs.Configs.full_paths["train_path"]
     patients_records = os.listdir(train_root_dir)
     random.shuffle(patients_records)
 
@@ -72,10 +73,14 @@ def generate_json_file(path, name):
     else:
         logger.info('The json file already exists')
         
+# Accessing root_dir for generating the JSON file
+
+root_dir = configs.Configs.root_dir
 
 if __name__ == "__main__":
     logger.info("Running Everything now")
-    generate_json_file(configs.Config.newGlobalConfigs.root_dir, 'dataset.json')
+
+    generate_json_file(root_dir, 'dataset.json')
     logger.info('done')
 
 

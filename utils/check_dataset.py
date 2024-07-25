@@ -47,7 +47,7 @@ def check(directory: str, type = 'train'):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dir', type = str, default= "E:/Brats21 Data/Dataset/training/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData/",
+    parser.add_argument('--dir', type = str, default= "/home/fahim/F2NetViT/Dataset/BraTS2024-BraTS-GLI-TrainingData/training_data1_v2",
                         help = 'path to one of data directory either training or val')
     parser.add_argument('--type', type = str, default='train', help= 'train or val data')
     args = parser.parse_args()

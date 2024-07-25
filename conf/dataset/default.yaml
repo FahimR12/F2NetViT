@@ -1,6 +1,7 @@
-a_test_patient: /BraTS-GLI-00016-000
-dataset_xlsx: /BraTS2023_2017_GLI_Mapping.xlsx
-json_file: /dataset.json
-root_dir: E:/Brats23 Data/Dataset
-train_sub_dir: /training/ASNR-MICCAI-BraTS2023-GLI-Challenge-TrainingData
-validation_sub_dir: /validation/ASNR-MICCAI-BraTS2023-GLI-Challenge-ValidationData
+a_test_patient: /BraTS-GLI-03064-100
+dataset_xlsx: /Dataset/metadata.csv
+json_file: /Dataset/dataset.json
+root_dir: /home/fahim/F2NetViT
+train_sub_dir: /Dataset/BraTS2024-BraTS-GLI-TrainingData/training_data1_v2/
+validation_sub_dir: /Dataset/BraTS2024-BraTS-GLI-ValidationData/
+                        

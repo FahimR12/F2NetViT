@@ -18,7 +18,7 @@ import imageio
 
 try:
     from DataLoader.dataset import BraTSDataset, get_dataloader
-    from config.configs import Config
+    from F2NetViT.config.my_config import Config
 except ModuleNotFoundError:
     FILE = Path(__file__).resolve()
     ROOT = FILE.parents[0].parents[0]  #project root directory
@@ -27,7 +27,7 @@ except ModuleNotFoundError:
     # ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
     from DataLoader.dataset import BraTSDataset, get_dataloader
-    from config.configs import Config
+    from F2NetViT.config.my_config import Config
 
 
 def visualize_abnormal_area(image, label):

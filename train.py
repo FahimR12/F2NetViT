@@ -1,6 +1,6 @@
 import math
 import torch
-from config.reader import read_config
+from F2NetViT.config.my_config import read_config
 from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
 from torch.utils.data import DataLoader
