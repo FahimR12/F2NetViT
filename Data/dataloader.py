@@ -101,8 +101,7 @@ class BraTSDataset(Dataset):
         for data_type in self.data_types:
             img_path = os.path.join(root_path, case + data_type)
             
-            # Debugging output
-            print(f"Constructed img_path: {img_path}")
+
             
             img = self.load_img(img_path)
             if self.is_resize:
