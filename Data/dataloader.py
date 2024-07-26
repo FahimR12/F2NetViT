@@ -1,5 +1,5 @@
 '''
-BraTS 2023 Data loading
+BraTS 2024 Data loading
 -----------------------
 Load the dataset from the disk in batches for training and inference
 Author: Muhammad Faizan
@@ -82,37 +82,47 @@ class BraTSDataset(Dataset):
         -------
         sample: dict i.e. {"image", "mask"}
         """
-        #get root path
-        case = self.df.loc[index, "BraTS2024"]
-        root_path = self.df.loc[self.df['BraTS2024'] == case]['path'].values[0]
-        
-        # load and stack modalities
+        # Extract patient directory name (case ID) correctly
+        full_path = self.df.loc[index, "BraTS2024"]
+        case = os.path.basename(os.path.dirname(full_path))  # Get patient directory name
+        root_path = self.df.loc[self.df['BraTS2024'] == full_path]['path'].values[0]
+
+        # Debugging output
+        print(f"case: {case}")
+        print(f"root_path: {root_path}")
+
+            # If the root path does not end with the case, it's incorrect
+        if not root_path.endswith(case):
+            print(f"Warning: root_path does not match case: {root_path} vs. {case}")
+            # Here, you may decide what action to take; for instance, logging an error or attempting to correct the path
+
+
         modalities = [] 
         for data_type in self.data_types:
-            img_path = root_path + "/" + case + data_type
-            img = self.load_img(img_path)
+            img_path = os.path.join(root_path, case + data_type)
             
+            # Debugging output
+            print(f"Constructed img_path: {img_path}")
+            
+            img = self.load_img(img_path)
             if self.is_resize:
                 img = self.resize(img)
-    
             img = self.normalize(img)
             modalities.append(img)
+        
         img = np.stack(modalities)
         img = np.moveaxis(img, (0, 1, 2, 3), (0, 3, 2, 1))
         
-        # load the label for non test set
         if self.phase != "test":
-            mask_path =  root_path + "/" + case + "-seg.nii.gz"
+            mask_path = os.path.join(root_path, case + "-seg.nii.gz")
             mask = self.load_img(mask_path)
             mask = np.moveaxis(mask, (0, 1, 2), (2, 1, 0))
             
-            # resize to the given dimensions
             if self.is_resize:
                 mask = self.resize(mask)
                 mask = np.clip(mask.astype(np.uint8), 0, 1).astype(np.float32)
                 mask = np.clip(mask, 0, 1)
 
-            # convert the mask to 3 channels as there are 3 tumors classes
             if self.is_process_mask or self.phase == "training":
                 mask = self.preprocess_mask_labels(mask)
                 mask = np.moveaxis(mask, (0, 1, 2, 3), (0, 3, 2, 1))
@@ -120,22 +130,22 @@ class BraTSDataset(Dataset):
             data = {"image": img.astype(np.float32),
                     "label": mask.astype(np.float32)}
             
-            # apply data augmentation and transforms
+            # Apply data augmentation and transforms
             augmented = self.augmentations(data)
             
             img = augmented['image']
             mask = augmented['label']
-    
-            # return labelled sample
+
             return {
                 "image": img,
                 "label": mask,
             }
         
-        # return test set sample where labels are not available or attentionally not used
+        # Return test set sample where labels are not available or intentionally not used
         return {
             "image": img,
         }
+
     
     def load_img(self, file_path: str):
         """

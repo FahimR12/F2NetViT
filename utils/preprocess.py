@@ -75,25 +75,30 @@ def insert_cases_paths_to_df(df: str, train_dir: str = None, test_dir: str = Non
     train, val = separate_train_val_ids(json_file=json_file, fold=fold)
     df = df[df['BraTS2024'].notna()]
     for _, row in df.iterrows():
-        id = row["BraTS2024"]
-        if id in os.listdir(train_dir):
-            path = os.path.join(train_dir, id)
-            print(f"Path: {path}")
-            if id in train:
+        full_path = row["BraTS2024"]
+        patient_dir = full_path.split('/')[-2]  # Extract the directory name (e.g., BraTS-GLI-00005-100)
+        if patient_dir in os.listdir(train_dir):
+            path = os.path.join(train_dir, patient_dir)
+            if patient_dir in train:
                 type_ = "train"
-            elif id in val:
+            elif patient_dir in val:
                 type_ = "val"
             else:
                 type_ = None
-        elif id in os.listdir(test_dir):
-            path = os.path.join(test_dir, id)
+        elif test_dir and patient_dir in os.listdir(test_dir):
+            path = os.path.join(test_dir, patient_dir)
             type_ = "test"
+        else:
+            
+            path = None
+            type_ = None
         paths.append(path)
         phase.append(type_)
     df['path'] = paths
     df['phase'] = phase
     print("DataFrame processing completed.")
     return df
+
 
     
 
