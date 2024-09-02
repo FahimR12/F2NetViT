@@ -1,0 +1,2 @@
+roi: 64
+infer_overlap: 0.5

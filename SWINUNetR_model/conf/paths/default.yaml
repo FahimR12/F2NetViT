@@ -1,0 +1,6 @@
+dataset_file: /home/fahim/F2NetViT/metadata.csv
+dataset_path: /home/fahim/F2NetViT/Dataset
+json_file: /home/fahim/F2NetViT/dataset.json
+test_patient: /home/fahim/F2NetViT/Dataset/BraTS2024-BraTS-GLI-TrainingData/training_data1_v2/BraTS-GLI-03064-100
+train_path: /home/fahim/F2NetViT/Dataset/BraTS2024-BraTS-GLI-TrainingData/training_data1_v2/
+validation_path: /home/fahim/F2NetViT/Dataset/BraTS2024-BraTS-GLI-ValidationData/

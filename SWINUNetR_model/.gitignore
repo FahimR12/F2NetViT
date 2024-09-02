@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+# Dataset 
+Dataset/
+runs/
+Dataset.zip
+# Ignore files like checkpoints, caches, and virtual environments to keep the repository clean
+*.py[cod]
+.ipynb_checkpoints/
+.env
+.venv
+env/
+venv/
+.env.bak/
+venv.bak/
