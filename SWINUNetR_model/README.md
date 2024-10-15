@@ -53,26 +53,7 @@ The `Data` folder contains utilities for data loading and processing. The `BraTS
 - **Mask Preprocessing**: Handles preprocessing of segmentation masks for training.
 - **Modality Handling**: Works with various data modalities (`t1`, `t2`, `flair`, etc.) and stacks them as input channels.
 
-```python
-class BraTSDataset(Dataset):
-    """Dataset class for loading BraTS 2024 dataset for tumour segmentation."""
-    
-    def __getitem__(self, index):
-        # Load and preprocess image and mask
-        ...
-        
-    def load_img(self, file_path: str):
-        """Load .nii.gz images from file."""
-        ...
-        
-    def normalize(self, data: np.ndarray):
-        """Normalize image data."""
-        ...
-        
-    def resize(self, data: np.ndarray):
-        """Resize image data."""
-        ...
-        
-    def preprocess_mask_labels(self, mask: np.ndarray):
-        """Process tumour masks into multi-channel masks for training."""
-        ...
+# Example of running the training script:
+python train.py --data path_to_dataset --json_file split.json --fold 0 --batch 1 --max_epochs 100 --workers 2
+
+
